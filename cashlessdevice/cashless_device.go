@@ -45,31 +45,6 @@ func (cd *CashlessDevice) SendCancelSession() (err error) {
 	return cd.sendCommand([]byte{cmdCancelSession, cmdCancelSession})
 }
 
-func (cd *CashlessDevice) initResponseListener() error {
-	go func() {
-
-		tmp := make([]byte, 50)
-		event := Inp
-		for {
-
-			_, err := fd.Read(tmp)
-			if err != nil {
-				close(ret)
-				break
-			}
-
-			if err := binary.Read(bytes.NewBuffer(tmp), binary.LittleEndian, &event); err != nil {
-				panic(err)
-			}
-
-			ret <- event
-
-		}
-	}()
-	}
-
-	return nil
-}
 func (cd *CashlessDevice) sendCommand(cmd []byte) (err error) {
 	err = cd.ResetOutputBuffer()
 	if err != nil {
@@ -107,12 +82,4 @@ func validateCrc(c []byte) bool {
 	chk := make([]byte, 4)
 	binary.BigEndian.PutUint32(chk, sum)
 	return crcByte == chk[3]
-}
-
-func responseHandler(ackChannel chan bool, msgChannel chan Msg){
-	firstByte := make([]byte, 1)
-	for{
-		
-		select {}
-	}
 }
