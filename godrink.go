@@ -15,13 +15,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	c, err := r.Read()
+	c, err := r.GetCardChannel()
 	if err != nil {
 		panic(err)
 	}
-	for k := range c {
-		if k.Type == reader.EvKEY {
-			fmt.Println(k.KeyString())
-		}
+	for id := range c {
+		fmt.Println(id)
 	}
 }

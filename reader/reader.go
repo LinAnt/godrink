@@ -98,16 +98,16 @@ func newInputDeviceReader(buff []byte, id int) *InputDevice {
 	rd := bufio.NewReader(bytes.NewReader(buff))
 	rd.ReadLine()
 	dev, _, _ := rd.ReadLine()
-	splt := strings.Split(string(dev), "=")
+	split := strings.Split(string(dev), "=")
 
 	return &InputDevice{
 		Id:   id,
-		Name: splt[1],
+		Name: strings.Trim(split[1], "\""),
 	}
 }
 
-func (r *Reader) Read() (<-chan InputEvent, error) {
-	ret := make(chan InputEvent, 512)
+func (r *Reader) GetCardChannel() (<-chan string, error) {
+	ret := make(chan string, 512)
 
 	if err := checkRoot(); err != nil {
 		close(ret)
@@ -124,6 +124,7 @@ func (r *Reader) Read() (<-chan InputEvent, error) {
 
 		tmp := make([]byte, eventsize)
 		event := InputEvent{}
+		id := ""
 		for {
 
 			_, err := fd.Read(tmp)
@@ -135,8 +136,14 @@ func (r *Reader) Read() (<-chan InputEvent, error) {
 			if err := binary.Read(bytes.NewBuffer(tmp), binary.LittleEndian, &event); err != nil {
 				panic(err)
 			}
-
-			ret <- event
+			if event.Type == EvKEY && event.Value == 1 { // We only read Key Events and we only read Key pressed (1)
+				if event.KeyString() == "ENTER" { // If we get Enter we have all the read chars and return the string.
+					ret <- id
+					id = ""
+				} else {
+					id += event.KeyString() // Concatenate to get full ID
+				}
+			}
 
 		}
 	}()
