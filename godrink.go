@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/LinAnt/go-drink/reader"
+	"github.com/LinAnt/godrink/reader"
 )
 
 const (
