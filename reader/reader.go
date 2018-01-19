@@ -106,6 +106,7 @@ func newInputDeviceReader(buff []byte, id int) *InputDevice {
 	}
 }
 
+// GetCardChannel returns channel that spits out card id everytime card is swiped
 func (r *Reader) GetCardChannel() (<-chan string, error) {
 	ret := make(chan string, 512)
 

@@ -91,7 +91,8 @@ func (db *Database) ChangeBalance(cardID string, amount int64) error {
 func (db *Database) NewUser(cardID, name, surname string, matNbr, amount int64) error {
 	tx := db.MustBegin()
 	// TODO: Don't drink and code :P
-	_, err := tx.NamedExec("INSERT INTO Cards (card_id, name, surname, mat_nbr, last_update, last_top_up, credit) VALUES (:card_id, :name, :surname, :mat_nbr, :last_update, :last_top_up, :credit)", &Card{
+	_, err := tx.NamedExec(`INSERT INTO Cards (card_id, name, surname, mat_nbr, last_update, last_top_up, credit) 
+	VALUES (:card_id, :name, :surname, :mat_nbr, :last_update, :last_top_up, :credit)`, &Card{
 		ID:         cardID,
 		Name:       name,
 		Surname:    surname,
